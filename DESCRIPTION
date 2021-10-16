@@ -1,0 +1,20 @@
+Package: lab4
+Type: Package
+Title: A package for linear regression models including ridge regression
+Version: 1.0
+Date: 2021-09-15
+Authors@R: c(person("Marc", "Braun", role = c("aut", "cre"), email = "marbr987@student.liu.se"))
+Description: This package offers implementation of a linear regression model including a function for ridge regression.
+License: MIT + file LICENSE
+RoxygenNote: 7.1.2
+Encoding: UTF-8
+Imports: ggplot2
+LazyData: true
+Suggests: 
+    rmarkdown,
+    knitr,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Depends: 
+    R (>= 2.10)
+VignetteBuilder: knitr

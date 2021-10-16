@@ -1,0 +1,72 @@
+---
+title: "lab4-vignette"
+output: rmarkdown::html_vignette
+author: Dharani Ganesan and Marc Braun
+vignette: >
+  %\VignetteIndexEntry{lab4-vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(lab4)
+```
+
+## Setup
+To install the lab4 package, source it from GitHub with the command `devtools::install_github("Marbr987/lab4")`.
+
+## Usage of linreg function
+The `linreg()` function can be used to perform a linear regression. It takes two arguments, `formula` and `data`, where `formula` is the formula consisting of parameters of `data` used to perform the regression. The function returns an object of class linreg.  
+The following example illustrates the use of `linreg()` with the `iris` dataset, which is also included in this package.
+
+```{r}
+# Crate an object of class linreg by calling the linreg function
+linreg_obj <- linreg(formula = Petal.Length ~ Species, data = iris)
+class(linreg_obj)
+
+# The linreg object is a list containing the following elements
+names(linreg_obj)
+```
+
+## Usage of methods for linreg objects
+The `print()` method prints out the call of the function and the coefficients of the linear regresion.
+```{r}
+print(linreg_obj)
+```
+
+The `plot()` function provides the two plots shown in the example below. It returns the plots in a list of size two.
+```{r, fig.width=7, fig.height=6}
+plot_list <- plot(linreg_obj)
+print(plot_list[1])
+print(plot_list[2])
+```
+
+The `resid()` method prints out the residuals of the linear regression.
+```{r}
+head(resid(linreg_obj))
+```
+
+The `pred()` method prints out the target values predicted by the linear regression.
+```{r}
+head(pred(linreg_obj))
+```
+
+The `coef()` method prints out the coefficients of the linear regression.
+```{r}
+coef(linreg_obj)
+```
+
+The `summary()` method prints a summary of the linear regression as seen in the example below.
+```{r}
+summary(linreg_obj)
+```
+
+
+
