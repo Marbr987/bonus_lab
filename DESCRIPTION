@@ -1,4 +1,4 @@
-Package: lab4
+Package: bonusLab
 Type: Package
 Title: A package for linear regression models including ridge regression
 Version: 1.0
@@ -8,7 +8,9 @@ Description: This package offers implementation of a linear regression model inc
 License: MIT + file LICENSE
 RoxygenNote: 7.1.2
 Encoding: UTF-8
-Imports: ggplot2
+Imports: 
+    ggplot2,
+    MASS
 LazyData: true
 Suggests: 
     rmarkdown,
