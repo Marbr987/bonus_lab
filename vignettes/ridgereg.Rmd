@@ -1,7 +1,7 @@
 ---
 title: "bonusLab-vignette"
 output: rmarkdown::html_vignette
-author: Marc Braun
+author: Dharani Ganesan, Hussnain Khalid, Marc Braun
 vignette: >
   %\VignetteIndexEntry{bonusLab-vignette}
   %\VignetteEngine{knitr::rmarkdown}
