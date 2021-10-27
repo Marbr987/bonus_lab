@@ -10,7 +10,10 @@ RoxygenNote: 7.1.2
 Encoding: UTF-8
 Imports: 
     ggplot2,
-    MASS
+    MASS,
+    dplyr,
+    nycflights13,
+    maps
 LazyData: true
 Suggests: 
     rmarkdown,
