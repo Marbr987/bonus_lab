@@ -39,7 +39,8 @@ ridgereg <- function(formula, data, lambda){
   names(coeff) <- colnames(X)
   y_pred <- X %*% coeff
   y_pred <- as.numeric(y_pred[,1])
-  res <- list(call = call,
+  res <- list(formula = formula,
+              call = call,
               regression_coefficient = coeff,
               fitted_values = y_pred
               )

@@ -4,10 +4,12 @@
 \alias{pred}
 \title{Generic pred() function for S3}
 \usage{
-pred(object)
+pred(object, ...)
 }
 \arguments{
 \item{object}{some object}
+
+\item{...}{other arguments}
 }
 \value{
 nothing

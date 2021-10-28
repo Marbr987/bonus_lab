@@ -4,10 +4,14 @@
 \alias{pred.ridgereg}
 \title{pred S3 method}
 \usage{
-\method{pred}{ridgereg}(object)
+\method{pred}{ridgereg}(object, data = NULL, ...)
 }
 \arguments{
 \item{object}{An object of class ridgereg}
+
+\item{data}{A dataframe for which the values should be predicted. If not provided, the training data for the object is used.}
+
+\item{...}{other arguments}
 }
 \value{
 vector containing fitted values

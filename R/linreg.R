@@ -24,7 +24,8 @@ function(formula, data){
   var_coeff <- residual_variance * solve(t(R) %*% R)
   t_values <- coeff / sqrt(diag(var_coeff))
   p_values <- sapply(2*(1 - pt(abs(t_values), df)), function(x) {if(x < 2e-16) {"<2e-16"} else round(x,5)})
-  res <- list(call = call,
+  res <- list(formula = formula,
+              call = call,
               regression_coefficient = coeff,
               fitted_values = y_pred,
               residuals = residuals,
