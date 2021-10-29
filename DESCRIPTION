@@ -15,7 +15,8 @@ Imports:
     nycflights13,
     maps,
     caret,
-    mlbench
+    mlbench,
+    leaps
 LazyData: true
 Suggests: 
     rmarkdown,
