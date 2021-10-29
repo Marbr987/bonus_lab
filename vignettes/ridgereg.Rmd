@@ -56,7 +56,6 @@ set.seed(222)
 forward_selection <- caret::train(medv~., data = data_train, method = "leapForward",
                  tuneGrid = data.frame(nvmax = 1:(ncol(data) - 1)))
 forward_selection$results
-summary(forward_selection)
 ```
 
 ## 3. Evaluate the performance of this model on the training dataset
