@@ -26,46 +26,115 @@ Then load the bonusLab package and the packages and data required for this vigne
 library(bonusLab)
 library(mlbench)
 library(caret)
+```
+## 0. Data preparation
+Data prepared
+
+```{r}
 data("BostonHousing")
+data <- BostonHousing
 ```
 
 ## 1. Train Test Split
 First of all, the BostonHousing dataset is divided in a train and a test set.
 
 ```{r}
-train_indices <- createDataPartition(BostonHousing[,1], p=0.8)[[1]]
-BostonHousing_train <- BostonHousing[train_indices,]
-BostonHousing_test <- BostonHousing[-train_indices,]
+set.seed(222)
+train_indices <- createDataPartition(data[,1], p=0.8)[[1]]
+data_train <- data[train_indices,]
+data_test <- data[-train_indices,]
 ```
 
 ## 2. Fit a linear regression model and a fit a linear regression model with forward selection of covariates on the training dataset
-Some Description
 ```{r}
-# The code
+model_1 <- linreg( medv ~ ., data_train)
+model_1
+```
+
+```{r}
+set.seed(222)
+forward_selection <- caret::train(medv~., data = data_train, method = "leapForward",
+                 tuneGrid = data.frame(nvmax = 1:(ncol(data) - 1)))
+forward_selection$results
+summary(forward_selection)
 ```
 
 ## 3. Evaluate the performance of this model on the training dataset
-Some Description
+Performance of the model 1:
 ```{r}
-# The code
+y_train_pred_1 <- pred(model_1)
+y_test_pred_1 <- pred(model_1, data = data_test) # error here
+train_rmse <- sqrt(sum((y_train_pred_1 - data_train$medv)^2)/nrow(data_train))
+test_rmse <- sqrt(sum((y_test_pred_1 - data_test$medv)^2)/nrow(data_test)) # error here
+print(paste("Train RMSE is:", train_rmse, "; Test RMSE is:", test_rmse))
 ```
 
 ## 4. Fit a ridge regression model using ridgereg() function
-Some Description
+For model 2, we find optimal value with lambda = 1 and lambda = 2.8 and we find out with lambda = 2.3 we have lowest training RMSE.
+Model 2(a):
 ```{r}
-# The code
+model_2_a <- ridgereg(medv ~ ., data_train, lambda = 1)
+y_train_pred_2_a <- pred(model_2_a)
+y_test_pred_2_a <- pred(model_2_a, data = data_test) # error here
+train_rmse_2_a <- sqrt(sum((y_train_pred_2_a - data_train$medv)^2)/nrow(data_train))
+test_rmse_2_a <- sqrt(sum((y_test_pred_2_a - data_test$medv)^2)/nrow(data_test)) # error here
+print(paste("Train RMSE is:", train_rmse_2_a, "; Test RMSE is:", test_rmse_2_a))
+```
+Model 2(b):
+```{r}
+model_2_b <- ridgereg(medv ~ ., data_train, lambda = 2.8)
+y_train_pred_2_b <- pred(model_2_b)
+y_test_pred_2_b <- pred(model_2_b, data = data_test) # error here
+train_rmse_2_b <- sqrt(sum((y_train_pred_2_b - data_train$medv)^2)/nrow(data_train))
+test_rmse_2_b <- sqrt(sum((y_test_pred_2_b - data_test$medv)^2)/nrow(data_test)) # error here
+print(paste("Train RMSE is:", train_rmse_2_b, "; Test RMSE is:", test_rmse_2_b))
 ```
 
-## 5. Find the best hyperparameter value for λ
-Some Description
+## 5. Find the best hyperparameter value for lambda
+For model 3, we will use optimal value of the hyper-parameter 'lambda' and by using 10-fold cross-validation which will tune our model.
 ```{r}
-# The code
+set.seed(222)
+model_list <- list(library = "bonusLab",
+                   type = "Regression",
+                   parameters = data.frame(
+                      parameter = "lambda",
+                      class = "numeric",
+                      label = "lambda"),
+                   fit=function(x, y, wts, param, lev, last, weights, classProbs, ...) {
+                     ridgereg(formula=as.formula(paste0(colnames(x)[14], "~ .")), data=x, lambda = param)
+                   },
+                   grid=data.frame(lambda = seq(0.1, 5, 0.1)),
+                   predict=function(modelFit, newdata, preProc = NULL, submodels = NULL){
+                     pred(modelFit, data=newdata)
+                   },
+                   prob=NULL
+              )
+cv_lambda_selection <- caret::train(x = data_train, 
+                           y = data_train$medv, form = medv~.,
+                           method=model_list,
+                           tuneGrid = data.frame(lambda = seq(0.1, 5, 0.1)),
+                           trControl = trainControl(# for 10-folds
+                           number = 10,
+                           repeats = 10))
+cv_lambda_selection$results
+```
+Model 3:
+```{r}
+# model_3 <- ridgereg(medv ~ ., data_train, lambda = 2.3)
+# y_train_pred_3 <- pred_reg(model_3)
+# y_test_pred_3 <- pred_reg(model_3, data = data_test) # error here
+# train_rmse_3 <- sqrt(sum((y_train_pred_3 - data_train$medv)^2)/nrow(data_train))
+# test_rmse_3 <- sqrt(sum((y_test_pred_3 - data_test$medv)^2)/nrow(data_test)) # error here
+# print(paste("Train RMSE is:", y_train_pred_3, "; Test RMSE is:", y_test_pred_3))
 ```
 
 ## 6. Evaluate the performance of all three models
-Some Description
+Comparing test RMSE results of all the three models, so we can evaluate which one is good.
 ```{r}
-# The code
+# RMSE values of all these models are compared here
+# test_rmse
+# test_rmse_2_b
+# test_rmse_3
 ```
 
 
