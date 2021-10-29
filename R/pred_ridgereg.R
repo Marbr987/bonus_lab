@@ -10,7 +10,7 @@ pred.ridgereg <- function(object, data=NULL, ...){
   if(is.null(data)) return(object$fitted_values)
   else{
     X <- model.matrix(object$formula, data)
-    y_pred <- X %*% object$coeff
+    y_pred <- X %*% matrix(nrow=length(object$regression_coefficient), ncol=1 ,object$regression_coefficient)
     return(y_pred)
   }
 }
