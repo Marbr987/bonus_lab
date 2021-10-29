@@ -11,6 +11,6 @@ pred.linreg <- function(object, data=NULL, ...){
   else{
     X <- model.matrix(object$formula, data)
     y_pred <- X %*% matrix(nrow=length(object$regression_coefficient), ncol=1 ,object$regression_coefficient)
-    return(y_pred)
+    return(as.vector(y_pred))
   }
 }

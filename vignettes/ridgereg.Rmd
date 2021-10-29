@@ -1,7 +1,7 @@
 ---
 title: "bonusLab-vignette"
 output: rmarkdown::html_vignette
-author: Dharani Ganesan, Hussnain Khalid, Marc Braun
+author: Hussnain Khalid, Marc Braun
 vignette: >
   %\VignetteIndexEntry{bonusLab-vignette}
   %\VignetteEngine{knitr::rmarkdown}
@@ -101,15 +101,25 @@ model_list <- list(library = "bonusLab",
                       class = "numeric",
                       label = "lambda"),
                    fit=function(x, y, wts, param, lev, last, weights, classProbs, ...) {
-                     ridgereg(formula=as.formula(paste0(colnames(x)[14], "~ .")), data=x, lambda = param)
+                      x <- if (is.data.frame(x)) {x} else {as.data.frame(x)}
+                      if(!is.data.frame(y)){
+                        y <- as.data.frame(y)
+                        colnames(y) <- "medv"
+                      }
+                      ridgereg(as.formula(paste0(colnames(y), "~ .")),
+                                  data=cbind(y, x), lambda=param)
                    },
-                   grid=data.frame(lambda = seq(0.1, 5, 0.1)),
+                   grid = function(x, y, len = NULL, search = "grid") {
+                      data.frame(lambda = seq(0.1, 5, 0.1))
+                   },
                    predict=function(modelFit, newdata, preProc = NULL, submodels = NULL){
                      pred(modelFit, data=newdata)
                    },
-                   prob=NULL
+                   prob=NULL,
+                   sort=NULL,
+                   loop=NULL
               )
-cv_lambda_selection <- caret::train(x = data_train, 
+cv_lambda_selection <- caret::train(x = data_train[,-14], 
                            y = data_train$medv, form = medv~.,
                            method=model_list,
                            tuneGrid = data.frame(lambda = seq(0.1, 5, 0.1)),
@@ -118,23 +128,24 @@ cv_lambda_selection <- caret::train(x = data_train,
                            repeats = 10))
 cv_lambda_selection$results
 ```
+
 Model 3:
 ```{r}
-# model_3 <- ridgereg(medv ~ ., data_train, lambda = 2.3)
-# y_train_pred_3 <- pred_reg(model_3)
-# y_test_pred_3 <- pred_reg(model_3, data = data_test) # error here
-# train_rmse_3 <- sqrt(sum((y_train_pred_3 - data_train$medv)^2)/nrow(data_train))
-# test_rmse_3 <- sqrt(sum((y_test_pred_3 - data_test$medv)^2)/nrow(data_test)) # error here
-# print(paste("Train RMSE is:", y_train_pred_3, "; Test RMSE is:", y_test_pred_3))
+model_3 <- ridgereg(medv ~ ., data_train, lambda = 2.3)
+y_train_pred_3 <- pred_reg(model_3)
+y_test_pred_3 <- pred_reg(model_3, data = data_test) # error here
+train_rmse_3 <- sqrt(sum((y_train_pred_3 - data_train$medv)^2)/nrow(data_train))
+test_rmse_3 <- sqrt(sum((y_test_pred_3 - data_test$medv)^2)/nrow(data_test)) # error here
+print(paste("Train RMSE is:", y_train_pred_3, "; Test RMSE is:", y_test_pred_3))
 ```
 
 ## 6. Evaluate the performance of all three models
 Comparing test RMSE results of all the three models, so we can evaluate which one is good.
 ```{r}
-# RMSE values of all these models are compared here
-# test_rmse
-# test_rmse_2_b
-# test_rmse_3
+#RMSE values of all these models are compared here
+test_rmse
+test_rmse_2_b
+test_rmse_3
 ```
 
 
