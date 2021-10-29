@@ -63,9 +63,9 @@ summary(forward_selection)
 Performance of the model 1:
 ```{r}
 y_train_pred_1 <- pred(model_1)
-y_test_pred_1 <- pred(model_1, data = data_test) # error here
+y_test_pred_1 <- pred(model_1, data = data_test)
 train_rmse <- sqrt(sum((y_train_pred_1 - data_train$medv)^2)/nrow(data_train))
-test_rmse <- sqrt(sum((y_test_pred_1 - data_test$medv)^2)/nrow(data_test)) # error here
+test_rmse <- sqrt(sum((y_test_pred_1 - data_test$medv)^2)/nrow(data_test))
 print(paste("Train RMSE is:", train_rmse, "; Test RMSE is:", test_rmse))
 ```
 
@@ -75,18 +75,18 @@ Model 2(a):
 ```{r}
 model_2_a <- ridgereg(medv ~ ., data_train, lambda = 1)
 y_train_pred_2_a <- pred(model_2_a)
-y_test_pred_2_a <- pred(model_2_a, data = data_test) # error here
+y_test_pred_2_a <- pred(model_2_a, data = data_test)
 train_rmse_2_a <- sqrt(sum((y_train_pred_2_a - data_train$medv)^2)/nrow(data_train))
-test_rmse_2_a <- sqrt(sum((y_test_pred_2_a - data_test$medv)^2)/nrow(data_test)) # error here
+test_rmse_2_a <- sqrt(sum((y_test_pred_2_a - data_test$medv)^2)/nrow(data_test))
 print(paste("Train RMSE is:", train_rmse_2_a, "; Test RMSE is:", test_rmse_2_a))
 ```
 Model 2(b):
 ```{r}
 model_2_b <- ridgereg(medv ~ ., data_train, lambda = 2.8)
 y_train_pred_2_b <- pred(model_2_b)
-y_test_pred_2_b <- pred(model_2_b, data = data_test) # error here
+y_test_pred_2_b <- pred(model_2_b, data = data_test)
 train_rmse_2_b <- sqrt(sum((y_train_pred_2_b - data_train$medv)^2)/nrow(data_train))
-test_rmse_2_b <- sqrt(sum((y_test_pred_2_b - data_test$medv)^2)/nrow(data_test)) # error here
+test_rmse_2_b <- sqrt(sum((y_test_pred_2_b - data_test$medv)^2)/nrow(data_test))
 print(paste("Train RMSE is:", train_rmse_2_b, "; Test RMSE is:", test_rmse_2_b))
 ```
 
@@ -107,47 +107,49 @@ model_list <- list(library = "bonusLab",
                         colnames(y) <- "medv"
                       }
                       ridgereg(as.formula(paste0(colnames(y), "~ .")),
-                                  data=cbind(y, x), lambda=param)
+                                  data=cbind(y, x), lambda=param$lambda)
                    },
                    grid = function(x, y, len = NULL, search = "grid") {
                       data.frame(lambda = seq(0.1, 5, 0.1))
                    },
                    predict=function(modelFit, newdata, preProc = NULL, submodels = NULL){
-                     pred(modelFit, data=newdata)
+                     pred(modelFit, data=as.data.frame(newdata))
                    },
                    prob=NULL,
                    sort=NULL,
                    loop=NULL
               )
-cv_lambda_selection <- caret::train(x = data_train[,-14], 
-                           y = data_train$medv, form = medv~.,
-                           method=model_list,
-                           tuneGrid = data.frame(lambda = seq(0.1, 5, 0.1)),
-                           trControl = trainControl(# for 10-folds
-                           number = 10,
-                           repeats = 10))
-cv_lambda_selection$results
+cv_lambda_selection <- caret::train(
+                            medv~.,
+                            data = data_train,
+                            method=model_list,
+                            tuneGrid = data.frame(lambda = seq(0.1, 5, 0.1)),
+                            trControl = trainControl(# for 10-folds
+                            method = "repeatedcv",
+                            number = 10,
+                            repeats = 10))
+cv_lambda_selection$bestTune
 ```
 
 Model 3:
 ```{r}
-model_3 <- ridgereg(medv ~ ., data_train, lambda = 2.3)
-y_train_pred_3 <- pred_reg(model_3)
-y_test_pred_3 <- pred_reg(model_3, data = data_test) # error here
+model_3 <- ridgereg(medv ~ ., data_train, lambda = 5)
+y_train_pred_3 <- pred(model_3)
+y_test_pred_3 <- pred(model_3, data = data_test)
 train_rmse_3 <- sqrt(sum((y_train_pred_3 - data_train$medv)^2)/nrow(data_train))
-test_rmse_3 <- sqrt(sum((y_test_pred_3 - data_test$medv)^2)/nrow(data_test)) # error here
-print(paste("Train RMSE is:", y_train_pred_3, "; Test RMSE is:", y_test_pred_3))
+test_rmse_3 <- sqrt(sum((y_test_pred_3 - data_test$medv)^2)/nrow(data_test))
+print(paste("Train RMSE is:", train_rmse_3, "; Test RMSE is:", test_rmse_3))
 ```
 
 ## 6. Evaluate the performance of all three models
 Comparing test RMSE results of all the three models, so we can evaluate which one is good.
 ```{r}
 #RMSE values of all these models are compared here
-test_rmse
-test_rmse_2_b
-test_rmse_3
+print(test_rmse)
+print(test_rmse_2_b)
+print(test_rmse_3)
 ```
 
-
+# We can see that the first model is the best one.
 
 

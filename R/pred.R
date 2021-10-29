@@ -9,7 +9,12 @@
 pred.linreg <- function(object, data=NULL, ...){
   if(is.null(data)) return(object$fitted_values)
   else{
-    X <- model.matrix(object$formula, data)
+    if(!(c(object$formula[[2]]) %in% colnames(data))){
+      X <- model.matrix(object$formula[-2], data)
+    }
+    else {
+      X <- model.matrix(object$formula, data)      
+    }
     y_pred <- X %*% matrix(nrow=length(object$regression_coefficient), ncol=1 ,object$regression_coefficient)
     return(as.vector(y_pred))
   }

@@ -16,11 +16,13 @@ ridgereg <- function(formula, data, lambda){
   mean_X <- c(1)
   X_stand <- matrix(nrow=nrow(X), ncol=ncol(X))
   X_stand[,1] <- X[,1]
-  for (i in 2:ncol(X)) {
-    sd_X[i] <- sd(X[,i])
-    mean_X[i] <- mean(X[,i])
-    if(sd_X[i] != 0){
-      X_stand[,i] <- (X[,i] - mean_X[i]) / sd_X[i]      
+  if(ncol(X) >= 2){
+    for (i in 2:ncol(X)) {
+      sd_X[i] <- sd(X[,i])
+      mean_X[i] <- mean(X[,i])
+      if(sd_X[i] != 0){
+        X_stand[,i] <- (X[,i] - mean_X[i]) / sd_X[i]      
+      }
     }
   }
   y_var_name <- all.vars(formula)[1]
